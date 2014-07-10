@@ -69,10 +69,10 @@
  * or implied, of Andrea Leofreddi.
  */
 
-"use strict";
 
 
 function SVGPan(root) {
+"use strict";
 /// CONFIGURATION
 /// ====>
 
@@ -88,14 +88,18 @@ var zoomScale = 0.2; // Zoom sensitivity
 
 var state = 'none', svgRoot = null, stateTarget, stateOrigin, stateTf;
 
+setupHandlers(root);
+
+return {removeHandlers : removeHandlers};
+
 
 /**
  * Register handlers
  */
 function setupHandlers(root){
-	root.addEventListener('mouseup', handleMouseUp, false)
-	root.addEventListener('mousedown', handleMouseDown, false)
-	root.addEventListener('mousemove', handleMouseMove, false)
+	root.addEventListener('mouseup', handleMouseUp, false);
+	root.addEventListener('mousedown', handleMouseDown, false);
+	root.addEventListener('mousemove', handleMouseMove, false);
 
 	if(navigator.userAgent.toLowerCase().indexOf('webkit') >= 0)
 		window.addEventListener('mousewheel', handleMouseWheel, false); // Chrome/Safari
@@ -104,9 +108,9 @@ function setupHandlers(root){
 }
 
 function removeHandlers(){
-	root.removeEventListener('mouseup', handleMouseUp)
-	root.removeEventListener('mousedown', handleMouseDown)
-	root.removeEventListener('mousemove', handleMouseMove)
+	root.removeEventListener('mouseup', handleMouseUp);
+	root.removeEventListener('mousedown', handleMouseDown);
+	root.removeEventListener('mousemove', handleMouseMove);
 	window.removeEventListener('mousewheel', handleMouseWheel); // Chrome/Safari
 	window.removeEventListener('mousewheel', handleMouseWheel); // Chrome/Safari
 }
@@ -115,7 +119,7 @@ function removeHandlers(){
  * Retrieves the root element for SVG manipulation. The element is then cached into the svgRoot global variable.
  */
 function getRoot(root) {
-	if(svgRoot == null) {
+	if(svgRoot === null) {
 		var r = root.getElementsByClassName("viewport")[0] ? root.getElementsByClassName("viewport")[0] : root.documentElement, t = r;
 
 		while(t != root) {
@@ -224,15 +228,15 @@ function handleMouseMove(evt) {
 	var svgDoc = evt.target.ownerDocument;
 
 	var g = getRoot(svgDoc);
-
+	var p;
 	if(state == 'pan' && enablePan) {
 		// Pan mode
-		var p = getEventPoint(evt).matrixTransform(stateTf);
+		p = getEventPoint(evt).matrixTransform(stateTf);
 
 		setCTM(g, stateTf.inverse().translate(p.x - stateOrigin.x, p.y - stateOrigin.y));
 	} else if(state == 'drag' && enableDrag) {
 		// Drag mode
-		var p = getEventPoint(evt).matrixTransform(g.getCTM().inverse());
+		p = getEventPoint(evt).matrixTransform(g.getCTM().inverse());
 
 		setCTM(stateTarget, root.createSVGMatrix().translate(p.x - stateOrigin.x, p.y - stateOrigin.y).multiply(g.getCTM().inverse()).multiply(stateTarget.getCTM()));
 
@@ -249,14 +253,10 @@ function handleMouseDown(evt) {
 
 	evt.returnValue = false;
 
-	var svgDoc = evt.target.ownerDocument;
+	var svgDoc = evt.target.ownerDocument, g = getRoot(svgDoc);
 
-	var g = getRoot(svgDoc);
-
-	if(
-		evt.target.tagName == "svg"
-		|| !enableDrag // Pan anyway when drag is disabled and the user clicked on an element
-	) {
+	// Pan anyway when drag is disabled and the user clicked on an element
+	if( evt.target.tagName == "svg" || !enableDrag) {
 		// Pan mode
 		state = 'pan';
 
@@ -283,7 +283,6 @@ function handleMouseUp(evt) {
 		evt.preventDefault();
 
 	evt.returnValue = false;
-
 	var svgDoc = evt.target.ownerDocument;
 
 	if(state == 'pan' || state == 'drag') {
@@ -291,10 +290,4 @@ function handleMouseUp(evt) {
 		state = '';
 	}
 }
-
-
-
-setupHandlers(root);
-
-return {removeHandlers : removeHandlers}
 }
