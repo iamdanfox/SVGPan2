@@ -1,9 +1,11 @@
-/** 
+/* Tweaked by @iamdanfox to work with facebook react */
+
+/**
  *  SVGPan library 1.2.2
  * ======================
  *
- * Given an unique existing element with id "viewport" (or when missing, the 
- * first g-element), including the the library into any SVG adds the following 
+ * Given an unique existing element with className "viewport" (or when missing, the
+ * first g-element), including the the library into any SVG adds the following
  * capabilities:
  *
  *  - Mouse panning
@@ -69,7 +71,9 @@
 
 "use strict";
 
-/// CONFIGURATION 
+
+function SVGPan(root) {
+/// CONFIGURATION
 /// ====>
 
 var enablePan = 1; // 1 or 0: enable or disable panning (default enabled)
@@ -80,22 +84,18 @@ var zoomScale = 0.2; // Zoom sensitivity
 /// <====
 /// END OF CONFIGURATION 
 
-var root = document.documentElement;
+// var root = document.documentElement;
 
 var state = 'none', svgRoot = null, stateTarget, stateOrigin, stateTf;
 
-setupHandlers(root);
 
 /**
  * Register handlers
  */
 function setupHandlers(root){
-	setAttributes(root, {
-		"onmouseup" : "handleMouseUp(evt)",
-		"onmousedown" : "handleMouseDown(evt)",
-		"onmousemove" : "handleMouseMove(evt)",
-		//"onmouseout" : "handleMouseUp(evt)", // Decomment this to stop the pan functionality when dragging out of the SVG element
-	});
+	root.addEventListener('mouseup', handleMouseUp, false)
+	root.addEventListener('mousedown', handleMouseDown, false)
+	root.addEventListener('mousemove', handleMouseMove, false)
 
 	if(navigator.userAgent.toLowerCase().indexOf('webkit') >= 0)
 		window.addEventListener('mousewheel', handleMouseWheel, false); // Chrome/Safari
@@ -103,12 +103,20 @@ function setupHandlers(root){
 		window.addEventListener('DOMMouseScroll', handleMouseWheel, false); // Others
 }
 
+function removeHandlers(){
+	root.removeEventListener('mouseup', handleMouseUp)
+	root.removeEventListener('mousedown', handleMouseDown)
+	root.removeEventListener('mousemove', handleMouseMove)
+	window.removeEventListener('mousewheel', handleMouseWheel); // Chrome/Safari
+	window.removeEventListener('mousewheel', handleMouseWheel); // Chrome/Safari
+}
+
 /**
  * Retrieves the root element for SVG manipulation. The element is then cached into the svgRoot global variable.
  */
 function getRoot(root) {
 	if(svgRoot == null) {
-		var r = root.getElementById("viewport") ? root.getElementById("viewport") : root.documentElement, t = r;
+		var r = root.getElementsByClassName("viewport")[0] ? root.getElementsByClassName("viewport")[0] : root.documentElement, t = r;
 
 		while(t != root) {
 			if(t.getAttribute("viewBox")) {
@@ -284,3 +292,9 @@ function handleMouseUp(evt) {
 	}
 }
 
+
+
+setupHandlers(root);
+
+return {removeHandlers : removeHandlers}
+}
