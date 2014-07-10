@@ -71,15 +71,18 @@
 
 
 
-function SVGPan(root) {
+function SVGPan(root, opts) {
 "use strict";
 /// CONFIGURATION
 /// ====>
-
-var enablePan = 1; // 1 or 0: enable or disable panning (default enabled)
-var enableZoom = 1; // 1 or 0: enable or disable zooming (default enabled)
-var enableDrag = 0; // 1 or 0: enable or disable dragging (default disabled)
-var zoomScale = 0.2; // Zoom sensitivity
+opts = opts || {}
+var options = {
+	enablePan: (typeof opts.enablePan !== 'undefined') ? opts.enablePan : true, // enable or disable panning (default enabled)
+	enableZoom: (typeof opts.enableZoom !== 'undefined') ? opts.enableZoom : true, // enable or disable zooming (default enabled)
+	enableDrag: (typeof opts.enableDrag !== 'undefined') ? opts.enableDrag : false, // enable or disable dragging (default disabled)
+	zoomScale: (typeof opts.zoomScale !== 'undefined') ? opts.zoomScale : 0.2, // Zoom sensitivity
+	removeHandlers: removeHandlers
+}
 
 /// <====
 /// END OF CONFIGURATION
@@ -90,7 +93,7 @@ var state = 'none', svgRoot = null, stateTarget, stateOrigin, stateTf;
 
 setupHandlers(root);
 
-return {removeHandlers : removeHandlers};
+return options;
 
 
 /**
@@ -180,7 +183,7 @@ function setAttributes(element, attributes){
  * Handle mouse wheel event.
  */
 function handleMouseWheel(evt) {
-	if(!enableZoom)
+	if(!options.enableZoom)
 		return;
 
 	if(evt.preventDefault)
@@ -197,7 +200,7 @@ function handleMouseWheel(evt) {
 	else
 		delta = evt.detail / -9; // Mozilla
 
-	var z = Math.pow(1 + zoomScale, delta);
+	var z = Math.pow(1 + options.zoomScale, delta);
 
 	var g = getRoot(svgDoc);
 
@@ -229,12 +232,12 @@ function handleMouseMove(evt) {
 
 	var g = getRoot(svgDoc);
 	var p;
-	if(state == 'pan' && enablePan) {
+	if(state == 'pan' && options.enablePan) {
 		// Pan mode
 		p = getEventPoint(evt).matrixTransform(stateTf);
 
 		setCTM(g, stateTf.inverse().translate(p.x - stateOrigin.x, p.y - stateOrigin.y));
-	} else if(state == 'drag' && enableDrag) {
+	} else if(state == 'drag' && options.enableDrag) {
 		// Drag mode
 		p = getEventPoint(evt).matrixTransform(g.getCTM().inverse());
 
@@ -256,7 +259,7 @@ function handleMouseDown(evt) {
 	var svgDoc = evt.target.ownerDocument, g = getRoot(svgDoc);
 
 	// Pan anyway when drag is disabled and the user clicked on an element
-	if( evt.target.tagName == "svg" || !enableDrag) {
+	if( evt.target.tagName == "svg" || !options.enableDrag) {
 		// Pan mode
 		state = 'pan';
 

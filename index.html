@@ -25,7 +25,14 @@
 
   <script type="text/javascript">
     elem = document.getElementsByTagName('svg')[0]
-    SVGPan(elem)
+
+    var svgPan = SVGPan(elem, {enableZoom:false})
+
+    // allows you to change params later
+    setTimeout(function(){
+      svgPan.enableZoom=true
+    },2000)
+
   </script>
 </body>
 </html>
