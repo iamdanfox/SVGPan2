@@ -12,6 +12,9 @@
 
   div.panel {background:rgba(230,230,230,0.7);position:absolute;top:10px;left:10px;padding:10px;}
   h1 {text-align:center;}
+  h1 a {color:black;}
+  h1 a:hover {color:blue;}
+  iframe {position:absolute;top:35px;right:0px}
   pre {background:rgba(220,220,220,1);margin:0 -10px;padding:0 10px;}
   </style>
 
@@ -44,15 +47,15 @@
 
   <div class="panel">
 <h1><a href="http://github.com/iamdanfox/SVGPan2">SVGPan2</a></h1>
+<iframe src="http://ghbtns.com/github-btn.html?user=iamdanfox&amp;repo=SVGPan2&amp;type=watch&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="104px" height="20px"></iframe>
 <p><em>Zoom, pan and drag svg elements, no jQuery required</em></p>
-<h2>Normal Usage</h2>
 <pre><code>
 elem = document.getElementsByTagName('svg')[0]
 var svgPan = SVGPan(elem)
 
 </code></pre>
 
-<h2>Customise Options</h2>
+<h3>Customise Options</h3>
 <pre><code>
 var svgPan = SVGPan(elem, {
   enablePan: true,
@@ -72,7 +75,7 @@ svgPan.enablePan = false
 <button onClick="svgPan.enableZoom=!svgPan.enableZoom">toggle zooming</button>
 <button onClick="svgPan.enableDrag=!svgPan.enableDrag">toggle dragging</button>
 </p>
-<h2>Remove Capabilities</h2>
+<h3>Destroy</h3>
 <pre><code>
 svgPan.removeHandlers()
 
