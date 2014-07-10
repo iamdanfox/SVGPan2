@@ -9,6 +9,10 @@
   html {height:100%;font-family:Helvetica Neue, sans-serif;font-size:90%;}
   body {margin:0;height:100%;}
   svg {height:100%;width:100%;}
+
+  div.panel {background:rgba(230,230,230,0.7);position:absolute;top:10px;left:10px;padding:10px;}
+  h1 {text-align:center;}
+  pre {background:rgba(220,220,220,1);margin:0 -10px;padding:0 10px;}
   </style>
 
   <script src="SVGPan.js"></script>
@@ -17,22 +21,64 @@
 <body>
   <svg>
     <g class="viewport">
-      <rect x="100" y="100" height="70" width="70" fill="#39CCCC" stroke="none" />
-      <rect x="400" y="200" height="70" width="70" fill="#39CCCC" stroke="none" />
-      <rect x="300" y="300" height="70" width="70" fill="#39CCCC" stroke="none" />
+      <!-- rectangles inserted here -->
     </g>
   </svg>
 
   <script type="text/javascript">
+    var viewport = document.getElementsByClassName('viewport')[0]
+    var num = 0
+    function addTriangle() {
+      var x = (-0.25+Math.random())*document.body.clientWidth*2;
+      var y = (-0.25+Math.random())*document.body.clientHeight*2;
+      var d = 20 + Math.random()*70;
+      viewport.innerHTML += "<rect x='"+x+"' y='"+y+"' height='"+d+"' width='"+d+"' fill='#39CCCC' stroke='none' />";
+      num+=1;
+      if (num<60) setTimeout(addTriangle,5)
+    }
+    addTriangle()
+
     elem = document.getElementsByTagName('svg')[0]
-
-    var svgPan = SVGPan(elem, {enableZoom:false})
-
-    // allows you to change params later
-    setTimeout(function(){
-      svgPan.enableZoom=true
-    },2000)
-
+    var svgPan = SVGPan(elem)
   </script>
+
+  <div class="panel">
+<h1><a href="http://github.com/iamdanfox/SVGPan2">SVGPan2</a></h1>
+<p><em>Zoom, pan and drag svg elements, no jQuery required</em></p>
+<h2>Normal Usage</h2>
+<pre><code>
+elem = document.getElementsByTagName('svg')[0]
+var svgPan = SVGPan(elem)
+
+</code></pre>
+
+<h2>Customise Options</h2>
+<pre><code>
+var svgPan = SVGPan(elem, {
+  enablePan: true,
+  enableZoom: true,
+  enableDrag: false,
+  zoomScale: 0.2
+})
+
+</code></pre>
+<p>You can even adjust on the fly:</p>
+<pre><code>
+svgPan.enablePan = false
+
+</code></pre>
+<p>
+<button onClick="svgPan.enablePan=!svgPan.enablePan">toggle panning</button>
+<button onClick="svgPan.enableZoom=!svgPan.enableZoom">toggle zooming</button>
+<button onClick="svgPan.enableDrag=!svgPan.enableDrag">toggle dragging</button>
+</p>
+<h2>Remove Capabilities</h2>
+<pre><code>
+svgPan.removeHandlers()
+
+</code></pre>
+<h3>Credit</h3>
+<p>Based on work by Andrea Leofreddi</p>
+  </div>
 </body>
 </html>

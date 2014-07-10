@@ -123,15 +123,15 @@ function removeHandlers(){
  */
 function getRoot(root) {
 	if(svgRoot === null) {
-		var r = root.getElementsByClassName("viewport")[0] ? root.getElementsByClassName("viewport")[0] : root.documentElement, t = r;
-
+		var r = root.getElementsByClassName("viewport")[0] || root.getElementsByTagName("g")[0];
+		if (r === undefined) console.error("The root svg element must contain some g or .viewport element")
+			
+		var t = r;
 		while(t != root) {
 			if(t.getAttribute("viewBox")) {
 				setCTM(r, t.getCTM());
-
 				t.removeAttribute("viewBox");
 			}
-
 			t = t.parentNode;
 		}
 
